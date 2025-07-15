@@ -1,0 +1,146 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.diakonovtomer</groupId>
+    <artifactId>projektObjektorientierung</artifactId>
+    <version>0.0</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <javafx.version>20</javafx.version>
+        <main.class>com.diakonovtomer.projektObjektorientierung.Main</main.class>
+    </properties>
+
+    <dependencies>
+        <!-- JavaFX dependencies -->
+        
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </resource>
+    </resources>
+
+        <plugins>
+            <!-- Компилятор -->
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+
+            <!-- JavaFX Plugin (для запуска через `mvn javafx:run`) -->
+            
+ 
+
+
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>${main.class}</mainClass>
+                </configuration>
+            </plugin>
+
+            <!-- Fat JAR (всё в одном) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>shade</goal></goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>shaded</shadedClassifierName>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${main.class}</mainClass>
+                                </transformer>
+                            </transformers>
+         
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- jlink для создания runtime-образа -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jlink-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <addModules>ALL-MODULE-PATH</addModules>
+                    <outputDirectory>${project.build.directory}/image</outputDirectory>
+                    <launcher>
+                        <name>ProjektGrundlagen</name>
+                    </launcher>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!-- Для jpackage нужно использовать вручную или через exec -->
+    <!-- 
+    Пример команды jpackage:
+
+    jpackage ^
+      ==name ProjektGrundlagen ^
+      ==input target ^
+      ==main-jar projektGrundlagen-0.0-shaded.jar ^
+      ==main-class com.diakonovtomer.projektgrundlagen.Main ^
+      ==type exe ^
+      ==icon path\to\icon.ico ^
+      ==runtime-image target\image ^
+      ==dest dist
+    -->
+    <name>projektObjektorientierung</name>
+</project>
